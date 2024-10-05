@@ -165,9 +165,9 @@ vector3 traceRay(vector3 rayOrigin, vector3 rayDir, std::mt19937& gen, std::norm
 
             lightColour = lightColour + (h.mat.emissionStrength * h.mat.emissionColour) * rayColour;
             
-            rayColour = rayColour * h.mat.colour;
+            rayColour = rayDir.dot(h.normal) * rayColour * h.mat.colour;
         }else{
-            vector3 sunDir = vector3(0.5, 1, 1).normalised();
+            vector3 sunDir = vector3(-2, 1, -10).normalised();
 
             if (sunDir.dot(rayDir) > 0.95){
                 lightColour = lightColour + rayColour;
