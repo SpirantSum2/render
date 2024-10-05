@@ -20,6 +20,10 @@ public:
         return vector3(x+other.x, y+other.y, z+other.z);
     }
 
+    vector3 operator-(vector3 other){
+        return vector3(x-other.x, y-other.y, z-other.z);
+    }
+
     vector3& operator+=(vector3 other){
         x += other.x;
         y += other.y;
@@ -60,5 +64,13 @@ public:
     }
 
 };
+
+inline vector3 operator*(double multiplier, vector3 v){
+    return vector3(
+        v.x * multiplier,
+        v.y * multiplier,
+        v.z * multiplier
+    );
+}
 
 #endif
