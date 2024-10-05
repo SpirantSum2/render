@@ -57,47 +57,6 @@ HitInfo raySphere(vector3 rayOrigin, vector3 rayDir, Sphere s){
     return ret;
 }
 
-vector3 rayColour(vector3 rayOrigin, vector3 rayDir){
-    Material m1;
-    m1.colour = vector3(1, 0, 0);
-    Material m2;
-    m2.colour = vector3(0, 1, 0);
-    Sphere s1;
-    Sphere s2;
-    s1.centre = vector3(0, 0, 10);
-    s1.radius = 1;
-    s1.mat = m1;
-    s2.centre = vector3(1, 0, 5);
-    s2.radius = 1;
-    s2.mat = m2;
-
-    std::vector<Sphere> spheres = std::vector<Sphere>();
-    spheres.push_back(s1);
-    spheres.push_back(s2);
-
-    HitInfo closest;
-    Sphere closestSphere;
-    double closestDist = 999999;
-    bool hasHit = false;
-
-    for (Sphere s : spheres){
-        HitInfo h = raySphere(rayOrigin, rayDir, s);
-        if (h.hit && h.distance < closestDist){
-            hasHit = true;
-            closestDist = h.distance;
-            closest = h;
-            closestSphere = s;
-        }
-    }
-
-    if (hasHit){
-        return closestSphere.mat.colour;
-    }
-
-    double a = 0.5*(rayDir.y + 1);
-    return (1.0-a)*vector3(1, 1, 1) + a*vector3(0.5, 0.7, 1.0);
-}
-
 HitInfo rayCollsion(vector3 rayOrigin, vector3 rayDir, std::vector<Sphere> spheres){
     HitInfo closest;
     Sphere closestSphere;
@@ -119,32 +78,39 @@ HitInfo rayCollsion(vector3 rayOrigin, vector3 rayDir, std::vector<Sphere> spher
 
 vector3 traceRay(vector3 rayOrigin, vector3 rayDir, std::mt19937& gen, std::normal_distribution<double>& rand){
     Material m1;
-    m1.colour = vector3(0, 0, 0);
-    m1.emissionColour = vector3(1, 1, 1);
-    m1.emissionStrength = 1;
+    m1.colour = vector3(1, 1, 1);
+    m1.emissionStrength = 0;
     Material m2;
     m2.colour = vector3(0, 1, 0);
     m2.emissionStrength = 0;
     Material m3;
     m3.colour = vector3(0, 0, 1);
     m3.emissionStrength = 0;
+    Material m4;
+    m4.colour = vector3(0, 1, 1);
+    m4.emissionStrength = 0;
     Sphere s1;
     Sphere s2;
     Sphere s3;
-    s1.centre = vector3(-10, 3, 20);
-    s1.radius = 15;
+    Sphere s4;
+    s1.centre = vector3(0.3, -1.3, 4);
+    s1.radius = 0.7f;
     s1.mat = m1;
     s2.centre = vector3(1, -1, 5);
     s2.radius = 1;
     s2.mat = m2;
-    s3.centre = vector3(0, -10, 1);
-    s3.radius = 9;
+    s3.centre = vector3(0, -6.5, 4);
+    s3.radius = 5;
     s3.mat = m3;
+    s4.centre = vector3(-0.6, -1.5, 3.4);
+    s4.radius = 0.5;
+    s4.mat = m4;
 
     std::vector<Sphere> spheres = std::vector<Sphere>();
-    //spheres.push_back(s1);
+    spheres.push_back(s1);
     spheres.push_back(s2);
     spheres.push_back(s3);
+    spheres.push_back(s4);
 
     const int maxBounces = 5;
     vector3 rayColour = vector3(1, 1, 1);
@@ -167,10 +133,10 @@ vector3 traceRay(vector3 rayOrigin, vector3 rayDir, std::mt19937& gen, std::norm
             
             rayColour = rayDir.dot(h.normal) * rayColour * h.mat.colour;
         }else{
-            vector3 sunDir = vector3(-2, 1, -10).normalised();
+            vector3 sunDir = vector3(-10, 10, 0).normalised();
 
-            if (sunDir.dot(rayDir) > 0.95){
-                lightColour = lightColour + rayColour;
+            if (sunDir.dot(rayDir) > 0.97){
+                lightColour = lightColour + 10*rayColour;
             }else{
                 double a = 0.5*(rayDir.y + 1);
                 lightColour = lightColour + ((1.0-a)*vector3(1, 1, 1) + a*vector3(0.5, 0.7, 1.0)) * rayColour;

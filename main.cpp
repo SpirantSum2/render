@@ -5,12 +5,12 @@
 #include "vector3.cpp" 
 #include "rayCalc.cpp"
 
-void render(int threadID, int startRow, int endRow, colour* pixels, const int image_width, const int image_height, const int focalLength, const int raysPerPixel, int* lineCount){
+void render(int threadID, int noThreads, colour* pixels, const int image_width, const int image_height, const int focalLength, const int raysPerPixel, int* lineCount){
     std::random_device rd{};
     std::mt19937 gen{rd()};
     std::normal_distribution<double> rand{0, 1};
 
-    for (int j = startRow; j < endRow; j++) {
+    for (int j = threadID; j < image_height; j += noThreads) { // Distribute work equally amongst all threads
         //if (startRow == 0)
         //    std::clog << "\rScanlines remaining for thread 1: " << (endRow - j) << ' ' << std::flush;
         for (int i = 0; i < image_width; i++) {
@@ -36,7 +36,7 @@ int main() {
     const int image_height = 1080;
     const int focalLength = 1000;
 
-    const int raysPerPixel = 100;
+    const int raysPerPixel = 50;
 
     const int noThreads = 10;
 
@@ -55,7 +55,7 @@ int main() {
 
     for (int i = 0; i < noThreads; i++){
         lineCount[i] = linesPerThread;
-        threads.push_back(std::thread(render, i, i*linesPerThread, (i+1)*linesPerThread, pixels, image_width, image_height, focalLength, raysPerPixel, lineCount));
+        threads.push_back(std::thread(render, i, noThreads, pixels, image_width, image_height, focalLength, raysPerPixel, lineCount));
     }
 
     int linesRemaining = image_height;
