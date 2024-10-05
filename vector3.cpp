@@ -38,6 +38,21 @@ public:
         return *this;
     }
 
+    vector3& operator*=(vector3 other){ // Componentwise multiplication
+        x *= other.x;
+        y *= other.y;
+        z *= other.z;
+        return *this;
+    }
+
+    vector3 operator*(vector3 other){
+        return vector3(
+            x * other.x,   
+            y * other.y,
+            z * other.z
+        );
+    }
+
     double dot(vector3 other) {
         return x*other.x + y*other.y + z*other.z;
     }
