@@ -59,21 +59,35 @@ Scene cornell(){
     Material red;
     red.colour = vector3(0.63, 0.05, 0.05);
     red.emissionStrength = 0;
+    red.reflectance = 0;
 
     Material green;
     green.colour = vector3(0.12, 0.45, 0.15);
     green.emissionStrength = 0;
+    green.reflectance = 0;
 
     Material white;
     white.colour = vector3(0.73, 0.73, 0.73);
     white.emissionStrength = 0;
+    white.reflectance = 0;
 
     Material light;
     light.colour = vector3(0, 0, 0);
     light.emissionColour = vector3(1, 1, 1);
     light.emissionStrength = 10;
+    light.reflectance = 0;
 
-    Triangle t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12;
+    Material mirror;
+    mirror.colour = vector3(1, 1, 1);
+    mirror.emissionStrength = 0;
+    mirror.reflectance = 1;
+
+    Material frostedMirror;
+    frostedMirror.colour = vector3(1, 1, 1);
+    frostedMirror.emissionStrength = 0;
+    frostedMirror.reflectance = 0.5;
+
+    Triangle t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14;
     t1.origin = vector3(-0.37, -0.37, 2.74);
     t1.edge1 = vector3(0, 0, -0.74);
     t1.edge2 = vector3(0, 0.74, 0);
@@ -137,15 +151,26 @@ Scene cornell(){
     t11.origin = vector3(-0.185, 0.36, 2.185);
     t11.edge1 = vector3(0, 0, 0.37);
     t11.edge2 = vector3(0.37, 0, 0);
-    t11.normal = vector3(0, 0, -1);
+    t11.normal = vector3(0, -1, 0);
     t11.mat = light;
 
     t12.origin = vector3(0.185, 0.36, 2.555);
     t12.edge1 = vector3(0, 0, -0.37);
     t12.edge2 = vector3(-0.37, 0, 0);
-    t12.normal = vector3(0, 0, -1);
+    t12.normal = vector3(0, -1, 0);
     t12.mat = light;
     
+    t13.origin = vector3(0.37, 0.37, 2);
+    t13.edge1 = vector3(0, -0.74, 0);
+    t13.edge2 = vector3(-0.74, 0, 0);
+    t13.normal = vector3(0, 0, 1);
+    t13.mat = white;
+
+    t14.origin = vector3(-0.37, -0.37, 2);
+    t14.edge1 = vector3(0.74, 0, 0);
+    t14.edge2 = vector3(0, 0.74, 0);
+    t14.normal = vector3(0, 0, 1);
+    t14.mat = white;
 
     std::vector<Triangle> triangles = std::vector<Triangle>();
     triangles.push_back(t1);
@@ -160,14 +185,21 @@ Scene cornell(){
     triangles.push_back(t10);
     triangles.push_back(t11);
     triangles.push_back(t12);
+    triangles.push_back(t13);
+    triangles.push_back(t14);
 
-    Sphere s1;
-    s1.centre = vector3(0, -0.165, 2.5);
-    s1.radius = 0.2;
-    s1.mat = white;
+    Sphere s1, s2;
+    s1.centre = vector3(-0.16, -0.215, 2.5);
+    s1.radius = 0.15;
+    s1.mat = mirror;
+
+    s2.centre = vector3(0.16, -0.215, 2.5);
+    s2.radius = 0.15;
+    s2.mat = frostedMirror;
 
     std::vector<Sphere> spheres = std::vector<Sphere>();
     spheres.push_back(s1);
+    spheres.push_back(s2);
 
     Scene s;
     s.triangles = triangles;

@@ -10,6 +10,7 @@ struct Material{
     vector3 colour;
     vector3 emissionColour;
     double emissionStrength;
+    double reflectance;
 };
 
 struct Sphere{
@@ -106,8 +107,10 @@ HitInfo rayTriangle(vector3 rayOrigin, vector3 rayDir, Triangle tri){ // Möller
     
     if (tri.normal.dot(rayDir) < 0)
         ret.normal = tri.normal;
-    else
-        ret.normal = -1 * tri.normal;
+    else{ // We have hit the backside
+        ret.hit = false;
+        return ret;
+    }
 
     ret.mat = tri.mat;
     ret.position = rayOrigin + (ret.distance * rayDir);
@@ -142,7 +145,7 @@ HitInfo rayCollsion(vector3 rayOrigin, vector3 rayDir, std::vector<Sphere> spher
 }
 
 vector3 traceRay(vector3 rayOrigin, vector3 rayDir, std::mt19937& gen, std::normal_distribution<double>& rand, std::vector<Sphere>& spheres, std::vector<Triangle>& triangles){
-    const int maxBounces = 5;
+    const int maxBounces = 10;
     vector3 rayColour = vector3(1, 1, 1);
     vector3 lightColour = vector3(0, 0, 0);
 
@@ -152,12 +155,18 @@ vector3 traceRay(vector3 rayOrigin, vector3 rayDir, std::mt19937& gen, std::norm
             rayOrigin = h.position;
 
             // Random direction in the hemisphere of the normal
-            rayDir.x = rand(gen);
-            rayDir.y = rand(gen);
-            rayDir.z = rand(gen);
-            rayDir = rayDir.normalised(); 
-            if (rayDir.dot(h.normal) < 0)
-                rayDir = -1 * rayDir;
+            vector3 diffuseDir;
+            diffuseDir.x = rand(gen);
+            diffuseDir.y = rand(gen);
+            diffuseDir.z = rand(gen);
+            diffuseDir = diffuseDir.normalised(); 
+            if (diffuseDir.dot(h.normal) < 0)
+                diffuseDir = -1 * diffuseDir;
+
+            vector3 reflectedDir = rayDir - (2 * rayDir.dot(h.normal) * h.normal);
+
+            rayDir = (1-h.mat.reflectance) * diffuseDir + h.mat.reflectance * reflectedDir; // lerp between the 2 directions
+            
 
             lightColour = lightColour + (h.mat.emissionStrength * h.mat.emissionColour) * rayColour;
             

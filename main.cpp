@@ -43,7 +43,7 @@ int main() {
     const int image_height = 1024;
     const int focalLength = 2813;
 
-    const int raysPerPixel = 5000;
+    const int raysPerPixel = 200;
 
     const int noThreads = 10;
 
