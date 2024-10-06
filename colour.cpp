@@ -16,9 +16,9 @@ struct colour{
     colour(){r=g=b=0;}
 
     colour(vector3 c){ // Convert a vector with values in 0-1 to a colour
-        r = noNeg(c.x*255.99);
-        g = noNeg(c.y*255.99);
-        b = noNeg(c.z*255.99);
+        r = sqrt(noNeg(c.x))*255.99;
+        g = sqrt(noNeg(c.y))*255.99;
+        b = sqrt(noNeg(c.z))*255.99;
     }
 
     colour(uint8_t red, uint8_t green, uint8_t blue){
@@ -28,9 +28,9 @@ struct colour{
     }
 
     colour (double red, double green, double blue){ // Make a colour with values from 0 to 1
-        r = red*255.99;
-        g = green*255.99;
-        b = blue*255.99;
+        r = sqrt(red)*255.99;
+        g = sqrt(green)*255.99;
+        b = sqrt(blue)*255.99;
     }
 };
 

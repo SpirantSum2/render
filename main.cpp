@@ -8,7 +8,8 @@
 void render(int threadID, int noThreads, colour* pixels, const int image_width, const int image_height, const int focalLength, const int raysPerPixel, int* lineCount){
     std::random_device rd{};
     std::mt19937 gen{rd()};
-    std::normal_distribution<double> rand{0, 1};
+    std::normal_distribution<double> norm{0, 1};
+    std::uniform_real_distribution<double> offset{-0.5, 0.5};
 
     Material m1;
     m1.colour = vector3(1, 1, 1);
@@ -50,12 +51,12 @@ void render(int threadID, int noThreads, colour* pixels, const int image_width, 
         //    std::clog << "\rScanlines remaining for thread 1: " << (endRow - j) << ' ' << std::flush;
         for (int i = 0; i < image_width; i++) {
 
-            vector3 rayDir = vector3(i-image_width/2, image_height/2-j, focalLength).normalised(); // Project a width by height plane onto the unit sphere to get the direction of the ray for the pixel
+            vector3 rayDir;
             vector3 c = vector3(0, 0, 0);
 
             for (int k = 0; k < raysPerPixel; k++){
-                rayDir = vector3(i-image_width/2, image_height/2-j, focalLength).normalised();
-                c = c + ((double)1/raysPerPixel) * traceRay(vector3(0,0,0), rayDir, gen, rand, spheres);
+                rayDir = vector3(i-image_width/2 + offset(gen), image_height/2-j + offset(gen), focalLength).normalised();  // Project a width by height plane onto the unit sphere to get the direction of the ray for the pixel
+                c = c + ((double)1/raysPerPixel) * traceRay(vector3(0,0,0), rayDir, gen, norm, spheres);
             }
 
             colour col(c);
@@ -81,10 +82,6 @@ int main() {
     bmpWriter b;
 
     colour pixels[image_height*image_width];
-
-    std::random_device rd{};
-    std::mt19937 gen{rd()};
-    std::normal_distribution<double> rand{0, 1};
 
     const int linesPerThread = image_height / noThreads;
 

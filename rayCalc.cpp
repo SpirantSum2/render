@@ -43,7 +43,7 @@ HitInfo raySphere(vector3 rayOrigin, vector3 rayDir, Sphere s){
         return ret;
     
     // We hit a sphere
-    ret.distance = (-b - sqrt(disc))/2;
+    ret.distance = (-b - sqrt(disc))/2 -0.001f;
 
     if (ret.distance < 0){
         ret.hit = false;
