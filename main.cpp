@@ -10,6 +10,41 @@ void render(int threadID, int noThreads, colour* pixels, const int image_width, 
     std::mt19937 gen{rd()};
     std::normal_distribution<double> rand{0, 1};
 
+    Material m1;
+    m1.colour = vector3(1, 1, 1);
+    m1.emissionStrength = 0;
+    Material m2;
+    m2.colour = vector3(0, 1, 0);
+    m2.emissionStrength = 0;
+    Material m3;
+    m3.colour = vector3(0, 0, 1);
+    m3.emissionStrength = 0;
+    Material m4;
+    m4.colour = vector3(0, 1, 1);
+    m4.emissionStrength = 0;
+    Sphere s1;
+    Sphere s2;
+    Sphere s3;
+    Sphere s4;
+    s1.centre = vector3(0.3, -1.3, 4);
+    s1.radius = 0.7f;
+    s1.mat = m1;
+    s2.centre = vector3(1, -1, 5);
+    s2.radius = 1;
+    s2.mat = m2;
+    s3.centre = vector3(0, -6.5, 4);
+    s3.radius = 5;
+    s3.mat = m3;
+    s4.centre = vector3(-0.6, -1.5, 3.4);
+    s4.radius = 0.5;
+    s4.mat = m4;
+
+    std::vector<Sphere> spheres = std::vector<Sphere>();
+    spheres.push_back(s1);
+    spheres.push_back(s2);
+    spheres.push_back(s3);
+    spheres.push_back(s4);
+
     for (int j = threadID; j < image_height; j += noThreads) { // Distribute work equally amongst all threads
         //if (startRow == 0)
         //    std::clog << "\rScanlines remaining for thread 1: " << (endRow - j) << ' ' << std::flush;
@@ -20,7 +55,7 @@ void render(int threadID, int noThreads, colour* pixels, const int image_width, 
 
             for (int k = 0; k < raysPerPixel; k++){
                 rayDir = vector3(i-image_width/2, image_height/2-j, focalLength).normalised();
-                c = c + ((double)1/raysPerPixel) * traceRay(vector3(0,0,0), rayDir, gen, rand);
+                c = c + ((double)1/raysPerPixel) * traceRay(vector3(0,0,0), rayDir, gen, rand, spheres);
             }
 
             colour col(c);
